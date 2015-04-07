@@ -11,7 +11,7 @@
 
 <p>
     <h2>Video:</h2>
-    <video width="850" height="480" id="video" src="video/test.mp4" controls="true"></video>
+    <video width="850" height="480" id="video" muted autoplay crossorigin="anonymous" src="https://dl.dropboxusercontent.com/u/17361825/test.mp4" controls="true"></video>
 </p>
 
 <p>
@@ -35,23 +35,23 @@ window.onload = function() {
     img = document.getElementById('img');
     
     var start = 0;
-    var end = 46;
+    var end = 10;
     var count = start;
     //video.currentTime = end;
 
     // caching video frames
-    video.addEventListener('timeupdate', function(){
-        if(count <= end) {
-            video.currentTime = count;    
+    setInterval(function() {
+        if(video.currentTime <= end) {
+            //video.currentTime = count;    
             ctx.drawImage(video, 0, 0);      
             
             var urlData = canvas.toDataURL("image/jpg");
             images.push(urlData);
             
-            video.currentTime = count;    
-            count += 0.03;
+            //video.currentTime = count;  
+            count += 0.04;
         }
-    });
+    }, 40);
 
     // mouse move
     img.onmousemove = function (e) {
