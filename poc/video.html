@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>
+    <h2>Canvas:</h2>
+    <canvas id="canvas" width="850" height="480" style="border:1px solid #d3d3d3;">
+    Your browser does not support the HTML5 canvas tag.
+    </canvas>
+</p>
+
+<p>
+    <h2>Video:</h2>
+    <video width="850" height="480" id="video" src="video/test.mp4" controls="true"></video>
+</p>
+
+<p>
+    <h2>Image:</h2>
+    <img id="img" width="850" height="480"/>
+</p>
+
+<script>
+
+var images = [];
+var maxIndex = 10114;
+var ctx;
+var width = 850;
+var img;
+
+window.onload = function() {
+    var canvas = document.getElementById("canvas");
+    ctx = canvas.getContext("2d");
+
+    var video = document.getElementById('video');
+    img = document.getElementById('img');
+    
+    var start = 0;
+    var end = 46;
+    var count = start;
+    //video.currentTime = end;
+
+    // caching video frames
+    video.addEventListener('timeupdate', function(){
+        if(count <= end) {
+            video.currentTime = count;    
+            ctx.drawImage(video, 0, 0);      
+            
+            var urlData = canvas.toDataURL("image/jpg");
+            images.push(urlData);
+            
+            video.currentTime = count;    
+            count += 0.03;
+        }
+    });
+
+    // mouse move
+    img.onmousemove = function (e) {
+
+    	if (document.all)  { 
+    		// IE
+      		x = event.x + document.body.scrollLeft; 
+      		y = event.y + document.body.scrollTop; 
+    	} else {
+      		x = e.pageX;
+      		y = e.pageY;
+    	}
+
+    	var idx = parseInt(x / width * images.length);
+    	if (idx >= images.length)
+    		idx = images.length - 1;
+
+    	draw(idx);
+
+    };
+    
+    draw(0);
+}
+
+
+
+function draw(index) {
+	if (index >= images.length)
+	{
+		return;
+	}
+
+	var data = images[index];
+    img.src = data;
+    //ctx.drawImage(img, 0, 0);
+    
+    //setTimeout(draw, 1000/24, index + 1);
+}
+
+</script>
+
+</body>
+</html>
