@@ -2,39 +2,35 @@
 <html>
 <body>
 
+<video width="850" height="480" id="video" muted autoplay crossorigin="anonymous" src="https://dl.dropboxusercontent.com/u/17361825/test.mp4" controls="true" style="display: block;"></video>
+
 <canvas id="canvas" width="850" height="480" style="display: block;">
 Your browser does not support the HTML5 canvas tag.
 </canvas>
 
-<video width="850" height="480" id="video" muted autoplay crossorigin="anonymous" src="https://dl.dropboxusercontent.com/u/17361825/test.mp4" controls="true" style="display: block;"></video>
-
-<p>
-    <img id="img" width="850" height="480"/>
-</p>
-
 <script>
 
 var images = [];
-var ctx;
 var width = 850;
-var img;
+var targetCanvas;
+var targetCanvasCtx;
 
 window.onload = function() {
-    var canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
-
-    var video = document.getElementById('video');
-    img = document.getElementById('img');
     
-    var end = 10;
+    var video = document.getElementById('video');
+    var end = 20;
 
     // caching video frames
     var interval = setInterval(function() {
         if(video.currentTime <= end) {
-            ctx.drawImage(video, 0, 0); 
-            var urlData = canvas.toDataURL("image/jpg", 0.7);
+            
+            var canvas = document.createElement("canvas");
+            canvas.width = 850;
+            canvas.height = 480;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0);
+            images.push(canvas);
 
-            images.push(urlData);
             if (images.length == 1)
             {
                 draw(0);
@@ -47,7 +43,9 @@ window.onload = function() {
     }, 40);
 
     // mouse move
-    img.onmousemove = function (e) {
+    targetCanvas = document.getElementById('canvas');
+    targetCanvasCtx = targetCanvas.getContext("2d");
+    targetCanvas.onmousemove = function (e) {
 
     	if (document.all)  { 
     		// IE
@@ -67,8 +65,6 @@ window.onload = function() {
     };
 }
 
-
-
 function draw(index) {
 	if (index >= images.length)
 	{
@@ -76,7 +72,7 @@ function draw(index) {
 	}
 
 	var data = images[index];
-    img.src = data;
+    targetCanvasCtx.drawImage(data, 0, 0);
 }
 
 </script>
