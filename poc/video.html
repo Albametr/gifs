@@ -31,9 +31,9 @@ window.onload = function() {
     // caching video frames
     var interval = setInterval(function() {
         if(video.currentTime <= end) {
-            ctx.drawImage(video, 0, 0);      
-            
+            ctx.drawImage(video, 0, 0); 
             var urlData = canvas.toDataURL("image/jpg", 0.7);
+
             images.push(urlData);
             if (images.length == 1)
             {
@@ -44,7 +44,7 @@ window.onload = function() {
             clearInterval(interval);
             video.pause();
         }
-    }, 100);
+    }, 40);
 
     // mouse move
     img.onmousemove = function (e) {
