@@ -3,18 +3,18 @@
 <body>
 
 <p>Canvas:</p>
-<canvas id="myCanvas" width="1280" height="720" style="border:1px solid #d3d3d3;">
+<canvas id="myCanvas" width="850" height="480">
 Your browser does not support the HTML5 canvas tag.
 </canvas>
 
 <script>
 
 var images = [];
-var maxIndex = 10114;
+var maxIndex = 1500;
 var ctx;
-width = 1280;
-for (var i = 10000; i < maxIndex; i++) {
-	var imageSrc = 'Untitled-' + i + '.jpg';
+width = 850;
+for (var i = 1000; i < maxIndex; i++) {
+	var imageSrc = 'test' + i + '.jpg';
 	var img = new Image();
     img.src = 'images/' + imageSrc;
     images.push(img);
@@ -56,8 +56,6 @@ function draw(index) {
 
 	var img = images[index];
     ctx.drawImage(img, 0, 0);
-    
-    //setTimeout(draw, 1000/24, index + 1);
 }
 
 </script>
