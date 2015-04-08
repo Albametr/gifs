@@ -2,7 +2,7 @@
 <html>
 <body>
 
-<video width="850" height="480" id="video" muted autoplay crossorigin="anonymous" src="https://dl.dropboxusercontent.com/u/17361825/test.mp4" controls="true" style="display: block;"></video>
+<video width="850" height="480" id="video" muted autoplay src="video/test.mp4" controls="true" style="display: block;"></video>
 
 <canvas id="canvas" width="850" height="480" style="display: block;">
 Your browser does not support the HTML5 canvas tag.
@@ -18,7 +18,7 @@ var targetCanvasCtx;
 window.onload = function() {
     
     var video = document.getElementById('video');
-    var end = 20;
+    var end = 5;
 
     // caching video frames
     var interval = setInterval(function() {
