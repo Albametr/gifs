@@ -1,5 +1,5 @@
 exports.index = function (req, res) {
-    res.render('index', {title: 'Gifs'});
+    res.render('index', {title: 'Gifs feed'});
 }
 
 exports.notfound = function (req, res) {
