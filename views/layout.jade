@@ -1,10 +1,10 @@
 doctype html
-html
+html(ng-app='aoo')
     head
         title= title
         link(rel='stylesheet', href='/css/lib.min.css')
         script(src='/js/lib.min.js')
         script(src='/js/app.js')
-    body
+    body(ng-controller='appController')
         block content
         

@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var logger = require('morgan');
 
 var routes = require('./routes');
+var api = require('./routes/api');
 
 var app = express();
 
@@ -16,6 +17,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/api', api);
 app.use('*', routes.index);
 
 // error handlers
