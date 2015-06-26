@@ -8,29 +8,31 @@
     end = 5
 
     video = document.getElementById 'video'
-    interval = setInterval () ->
-      if video.currentTime <= end
-        canvas = document.createElement 'canvas'
-        canvas.width = width
-        canvas.height = height
-        
-        ctx = canvas.getContext '2d'
-        ctx.drawImage video, 0, 0
-        images.push canvas
-        
-        if images.length == 1
-          draw 0
+    video.onplay = ->
+      interval = setInterval () ->
+        if video.currentTime <= end
+          canvas = document.createElement 'canvas'
+          canvas.width = width
+          canvas.height = height
+          
+          ctx = canvas.getContext '2d'
+          ctx.drawImage video, 0, 0
+          images.push canvas
+          
+          if images.length == 1
+            draw 0
+            return
+        else
+          clearInterval interval
+          video.pause()
           return
-      else
-        clearInterval interval
-        video.pause()
-        return
-    , 40
+      , 40
+      return
 
     targetCanvas = document.getElementById 'gif'
     targetCanvasCtx = targetCanvas.getContext '2d'
     draw = (index) ->
-      if index >= images.length
+      if index < 0 || index >= images.length
         return
 
       data = images[index]
