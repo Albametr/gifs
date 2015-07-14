@@ -1,14 +1,17 @@
-exports.index = function (req, res) {
-    res.render('index', {title: 'Gifs feed'});
-}
+var express = require('express');
+var router = express.Router();
 
-exports.notfound = function (req, res) {
+router.get('/', function (req, res) {
+    res.render('index', {title: 'Gifs feed'});
+});
+
+router.use(function (req, res) {
     res.status(404).format({
         html: function () {
-            res.render('404', { title: '404 Not Found'});
+            res.render('404', {title: '404 Not Found'});
         },
         json: function () {
-            res.send({ message: 'Resource not found' });
+            res.send({message: 'Resource not found'});
         },
         xml: function () {
             res.write('<error>\n');
@@ -19,9 +22,9 @@ exports.notfound = function (req, res) {
             res.send('Resource not found\n');
         }
     });
-};
+});
 
-exports.error = function (err, req, res, next) {
+router.use(function (err, req, res, next) {
     console.error(err.stack);
     var msg;
 
@@ -37,13 +40,15 @@ exports.error = function (err, req, res, next) {
 
     res.format({
         html: function () {
-            res.render('5xx', { title: msg, msg: msg, status: res.statusCode });
+            res.render('5xx', {title: msg, msg: msg, status: res.statusCode});
         },
         json: function () {
-            res.send({ error: msg });
+            res.send({error: msg});
         },
         text: function () {
             res.send(msg + '\n');
         }
     });
-};
+});
+
+module.exports = router;

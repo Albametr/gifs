@@ -18,11 +18,8 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api', api);
-app.use('*', routes.index);
 
-// error handlers
-app.use(routes.notfound);
-app.use(routes.error);
+app.use('/api', api);
+app.use('/', routes);
 
 module.exports = app;
