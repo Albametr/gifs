@@ -2,17 +2,20 @@ var express = require('express');
 var async = require('async');
 var router = express.Router();
 var Gif = require('../../models/gif');
-var gifService = require('../../lib/gif-service');
 var fileService = require('../../lib/file-service');
 
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 
 router.get('/', function (req, res, next) {
-    gifService.getGifs(req.query.last, req.query.top, function (err, gifs) {
+    Gif.getTop(req.query.last, req.query.top, function (err, gifs) {
         if (err) return next(err);
 
-        res.json(gifs);
+        var gifDtos = gifs.map(function (item) {
+            return gifMapper(item);
+        });
+
+        res.json(gifDtos);
     });
 });
 
@@ -38,10 +41,13 @@ router.post('/', multipartMiddleware, function (req, res, next) {
         function (err, files) {
             if (err) return next(err);
 
-            gifService.addGif(req.body.name, files.screenshot, files.video, function (err, gif) {
+            var gif = createGif(req.body.name, files.screenshot, files.video);
+
+            gif.save(function (err, data) {
                 if (err) return next(err);
 
-                res.status(201).json(gif);
+                var gifDto = gifMapper(data);
+                res.status(201).json(gifDto);
             });
         });
 });
@@ -66,3 +72,25 @@ router.delete('/:gif_id', function (req, res, next) {
 });
 
 module.exports = router;
+
+
+function createGif(name, screenshot, video) {
+    return new Gif({
+        name: name,
+        screenshotUri: screenshot.uri,
+        screenshotPath: screenshot.dstPath,
+        videoUri: video.uri,
+        videoPath: video.dstPath,
+        created: new Date()
+    });
+}
+
+function gifMapper(gif) {
+    return {
+        id: gif._id,
+        name: gif.name,
+        videoUri: gif.videoUri,
+        screenshotUri: gif.screenshotUri,
+        created: gif.created
+    };
+}

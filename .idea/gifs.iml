@@ -6,5 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Node.js v0.11.14-nightly-20140819-pre Core Modules" level="application" />
     <orderEntry type="library" name="node_modules" level="application" />
+    <orderEntry type="library" name="gifs node_modules" level="project" />
   </component>
 </module>
