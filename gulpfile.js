@@ -20,20 +20,20 @@ gulp.task('libs', function () {
     .pipe(gulp.dest(config.outputJs));
 });
 
-gulp.task('coffee', function () {
-  return gulp.src([config.sourceAppCoffee])
-    .pipe(coffee({ bare: true }).on('error', gutil.log))
-    .pipe(gulp.dest(config.sourceApp));
-});
+//gulp.task('coffee', function () {
+//  return gulp.src([config.sourceAppCoffee])
+//    .pipe(coffee({ bare: true }).on('error', gutil.log))
+//    .pipe(gulp.dest(config.sourceApp));
+//});
 
-gulp.task('app', ['coffee'], function () {
-  return gulp.src([config.sourceAppJs])
-    .pipe(concat(config.allApp))
-    .pipe(gulp.dest(config.outputJs))
-    .pipe(uglify())
-    .pipe(rename({ extname: '.min.js' }))
-    .pipe(gulp.dest(config.outputJs));
-});
+//gulp.task('app', ['coffee'], function () {
+//  return gulp.src([config.sourceAppJs])
+//    .pipe(concat(config.allApp))
+//    .pipe(gulp.dest(config.outputJs))
+//    .pipe(uglify())
+//    .pipe(rename({ extname: '.min.js' }))
+//    .pipe(gulp.dest(config.outputJs));
+//});
 
 gulp.task('styles', function () {
   return gulp.src(config.moduleStyles)
