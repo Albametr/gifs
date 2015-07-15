@@ -7,6 +7,6 @@ block content
       h1= title
       .row(ng-repeat='item in gifs')
         .col-sm-10.col-sm-offset-1
-            div(gf-gif url='{{item.videoUri}}')
+            div(gf-gif url='{{item.videoUri}}' style='width:auto;height:auto;')
           
   include ./angular/list.jade
