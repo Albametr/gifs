@@ -71,24 +71,27 @@ angular.module('directives', [])
                         e = e.originalEvent;
                     }
 
-                    position.x = e.offsetX;
+                    position.x =getX(e);
 
                     $targetCanvas.bind('mousemove', trackMove);
+                    $targetCanvas.bind('touchmove', trackMove);
                     e.preventDefault();
                 };
                 var mouseUp = function (e) {
+                    $targetCanvas.unbind('mousemove');
+                    $targetCanvas.unbind('touchmove');
+
                     if (e.originalEvent) {
                         e = e.originalEvent;
                     }
 
-                    position.prevX += e.offsetX - position.x;
+                    position.prevX += getX(e) - position.x;
                     if (position.prevX < 0) {
                         position.prevX = 0;
                     } else if (position.prevX > width) {
                         position.prevX = width;
                     }
 
-                    $targetCanvas.unbind('mousemove');
                     e.preventDefault();
                 };
 
@@ -97,7 +100,7 @@ angular.module('directives', [])
                     if (e.originalEvent) {
                         e = e.originalEvent;
                     }
-                    x = e.offsetX - position.x + position.prevX;
+                    x = getX(e) - position.x + position.prevX;
 
                     if (x >= 0 || x <= width) {
                         idx = parseInt(x / width * images.length);
@@ -105,6 +108,11 @@ angular.module('directives', [])
                         drawFrame(idx, images);
                     }
                     e.preventDefault();
+                };
+
+                function getX(e) {
+                    //return (e.touches && e.touches[0].clientX) || e.offsetX;
+                    return (e.changedTouches && e.changedTouches[0].clientX) || e.offsetX;
                 };
 
                 var trackTouchMove = function (e) {
@@ -119,11 +127,13 @@ angular.module('directives', [])
                     drawFrame(idx, images);
                     e.preventDefault();
                 };
+
                 $targetCanvas.bind('mousedown', mouseDown);
                 $targetCanvas.bind('mouseup', mouseUp);
                 $targetCanvas.bind('mouseleave', mouseUp);
 
-                $targetCanvas.bind('touchmove', trackTouchMove);
+                $targetCanvas.bind('touchstart', mouseDown);
+                $targetCanvas.bind('touchend', mouseUp);
             }
         }
     }]);
