@@ -50,4 +50,4 @@ gulp.task('bootstrap fonts', function () {
     .pipe(gulp.dest(config.outputFonts));
 });
 
-gulp.task('default', ['libs', 'coffee', 'app', 'styles', 'bootstrap fonts']);
+gulp.task('default', ['libs', /*'coffee', 'app',*/ 'styles', 'bootstrap fonts']);
