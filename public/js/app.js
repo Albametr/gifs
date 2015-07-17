@@ -5,6 +5,11 @@ angular.module('app', ['directives'])
         load = function () {
             $http.get('api/gifs').success(function (data) {
                 $scope.gifs = data;
+                $scope.gifs.unshift(
+                    {videoUri: '/video/out.webm', name: 'Test WEBM'},
+                    {videoUri: '/video/out.mp4', name: 'Test Mp4'},
+                    {videoUri: '/video/out2.webm', name: 'Test 2 WEBM'},
+                    {videoUri: '/video/out2.mp4', name: 'Test 2 Mp4'});
             }).error(function (err) {
                 console.log(err);
             });
@@ -78,9 +83,10 @@ angular.module('directives', [])
                     //}, 40);
                 });
 
-                var $targetCanvas = $element.find('canvas.gif-container');
-                var targetCanvasCtx = $targetCanvas[0].getContext('2d');
-                var targetImg = $element.find('img.img-container')[0];
+                var $targetCanvas = $video;
+                //var $targetCanvas = $element.find('canvas.gif-container');
+                //var targetCanvasCtx = $targetCanvas[0].getContext('2d');
+                //var targetImg = $element.find('img.img-container')[0];
                 var drawFrame = function (index, images) {
                     var data;
                     if (index < 0 || index >= images.length) {
@@ -97,16 +103,18 @@ angular.module('directives', [])
                     //};
                 };
 
-                var prevIndex=0;
-                var drawFrame_2=function(index){
-                    if(Math.abs(index-prevIndex)>=0.04) {
+                var prevIndex = 0;
+                var drawFrame_2 = function (index) {
+                    if (Math.abs(index - prevIndex) >= 0.04) {
                         video.currentTime = index;
                         //targetCanvasCtx.drawImage(video, 0, 0);
-                        prevIndex=index;
+                        prevIndex = index;
                     }
                 };
 
                 var position = {x: 0, prevX: 0};
+                var speedPos = {startX: 0, endX: 0, time1: 0, time2: 0, x1: 0, x2: 0};
+
                 var mouseDown = function (e) {
                     if (e.originalEvent) {
                         e = e.originalEvent;
@@ -115,12 +123,20 @@ angular.module('directives', [])
                     position.x = getX(e);
 
                     $targetCanvas.bind('mousemove', trackMove);
+                    $targetCanvas.bind('mouseleave', mouseUp);
                     $targetCanvas.bind('touchmove', trackMove);
+
+                    speedPos.time1 = Date.now();
+                    speedPos.time2 = Date.now();
+                    speedPos.x1 = getX(e);
+                    speedPos.x2 = getX(e);
+
                     e.preventDefault();
                 };
                 var mouseUp = function (e) {
                     $targetCanvas.unbind('mousemove');
                     $targetCanvas.unbind('touchmove');
+                    $targetCanvas.unbind('mouseleave');
 
                     if (e.originalEvent) {
                         e = e.originalEvent;
@@ -133,6 +149,94 @@ angular.module('directives', [])
                         position.prevX = width;
                     }
 
+                    // SPEED ---------------------------
+                    //var time = 40;
+                    //speedPos.startX = getX(e);
+                    var timeStep = 2;
+
+
+                    var sign = Math.sign(speedPos.x2 - speedPos.x1);
+                    var diff = Math.abs(speedPos.x2 - speedPos.x1);
+                    var time = speedPos.time2 - speedPos.time1;
+                    console.log('--------------------------------------')
+                    console.log('diff: '+diff+'; time: ' +time);
+
+
+                    var velocity = diff / time;
+                    var a = diff / (time * time);
+
+                    var timer = timeStep;
+                    var func = function () {
+                        console.log("timeout 2: " + timer);
+                        var difX = velocity * timer - (a * timer * timer) / 2;
+                        console.log("difX: " + difX);
+
+                        if (difX <= 0) {
+                            return;
+                        }
+
+                        var x = position.prevX += sign * difX;
+
+                        console.log("X: " + x);
+
+                        timer += timeStep;
+                        if (x >= 0 && x <= width) {
+                            var index = x / width * (end - start);
+                            drawFrame_2(index);
+
+                            setTimeout(func, 40);
+                        }
+                    };
+
+                    setTimeout(func, 40);
+
+                    //setTimeout(function () {
+                    //    $targetCanvas.unbind('mousemove');
+                    //    $targetCanvas.unbind('touchmove');
+                    //
+                    //    position.prevX += speedPos.endX - position.x;
+                    //    if (position.prevX < 0) {
+                    //        position.prevX = 0;
+                    //    } else if (position.prevX > width) {
+                    //        position.prevX = width;
+                    //    }
+                    //
+                    //    console.log("timeout 1." + speedPos.startX + "-" + speedPos.endX);
+                    //
+                    //    var sign = Math.sign(speedPos.endX - speedPos.startX);
+                    //    var diff = Math.abs(speedPos.endX - speedPos.startX);
+                    //
+                    //
+                    //    var velocity = diff / time;
+                    //    var a = diff / (time * time);
+                    //
+                    //    var timer = timeStep;
+                    //    var func = function () {
+                    //        console.log("timeout 2: " + timer);
+                    //        var difX = velocity * timer - (a * timer * timer) / 2;
+                    //        console.log("difX: " + difX);
+                    //
+                    //        if (difX <= 0) {
+                    //            return;
+                    //        }
+                    //
+                    //        var x = position.prevX += sign * difX;
+                    //
+                    //        console.log("X: " + x);
+                    //
+                    //        timer += timeStep;
+                    //        if (x >= 0 && x <= width) {
+                    //            var index = x / width * (end - start);
+                    //            drawFrame_2(index);
+                    //
+                    //            setTimeout(func, 40);
+                    //        }
+                    //    };
+                    //
+                    //    setTimeout(func, 40);
+                    //
+                    //}, time);
+
                     e.preventDefault();
                 };
 
@@ -141,26 +245,33 @@ angular.module('directives', [])
                     if (e.originalEvent) {
                         e = e.originalEvent;
                     }
+
+                    speedPos.endX = getX(e);
                     x = getX(e) - position.x + position.prevX;
 
-                    if (x >= 0 || x <= width) {
+                    if (x >= 0 && x <= width) {
                         //idx = parseInt(x / width * images.length);
                         //idx = Math.min(idx, images.length - 1);
                         //drawFrame(idx, images);
-                        var index=x / width * (end-start);
+                        var index = x / width * (end - start);
                         drawFrame_2(index);
                     }
+
+                    speedPos.time1 = speedPos.time2;
+                    speedPos.x1 = speedPos.x2;
+                    speedPos.time2 = Date.now();
+                    speedPos.x2 = getX(e);
+
                     e.preventDefault();
                 };
 
                 function getX(e) {
                     //return (e.touches && e.touches[0].clientX) || e.offsetX;
-                    return (e.changedTouches && e.changedTouches[0].clientX) || e.offsetX;
+                    return (e.changedTouches && e.changedTouches[0].clientX) || e.offsetX || e.layerX;
                 };
 
                 $targetCanvas.bind('mousedown', mouseDown);
                 $targetCanvas.bind('mouseup', mouseUp);
-                $targetCanvas.bind('mouseleave', mouseUp);
 
                 $targetCanvas.bind('touchstart', mouseDown);
                 $targetCanvas.bind('touchend', mouseUp);
