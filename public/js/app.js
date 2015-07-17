@@ -99,9 +99,9 @@ angular.module('directives', [])
 
                 var prevIndex=0;
                 var drawFrame_2=function(index){
-                    if(Math.abs(index-prevIndex)>=0.09) {
+                    if(Math.abs(index-prevIndex)>=0.04) {
                         video.currentTime = index;
-                        targetCanvasCtx.drawImage(video, 0, 0);
+                        //targetCanvasCtx.drawImage(video, 0, 0);
                         prevIndex=index;
                     }
                 };
@@ -144,11 +144,11 @@ angular.module('directives', [])
                     x = getX(e) - position.x + position.prevX;
 
                     if (x >= 0 || x <= width) {
-                        idx = parseInt(x / width * images.length);
-                        idx = Math.min(idx, images.length - 1);
-                        drawFrame(idx, images);
-                        //var index=x / width * (end-start);
-                        //drawFrame_2(index);
+                        //idx = parseInt(x / width * images.length);
+                        //idx = Math.min(idx, images.length - 1);
+                        //drawFrame(idx, images);
+                        var index=x / width * (end-start);
+                        drawFrame_2(index);
                     }
                     e.preventDefault();
                 };
