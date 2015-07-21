@@ -159,7 +159,7 @@ angular.module('directives', [])
                     var diff = Math.abs(speedPos.x2 - speedPos.x1);
                     var time = speedPos.time2 - speedPos.time1;
                     console.log('--------------------------------------')
-                    console.log('diff: '+diff+'; time: ' +time);
+                    console.log('diff: ' + diff + '; time: ' + time);
 
 
                     var velocity = diff / time;
@@ -255,6 +255,10 @@ angular.module('directives', [])
                         //drawFrame(idx, images);
                         var index = x / width * (end - start);
                         drawFrame_2(index);
+                    } else if (x < 0) {
+                        position.prevX = width + x;
+                    } else if (x > width) {
+                        position.prevX = x - width;
                     }
 
                     speedPos.time1 = speedPos.time2;
