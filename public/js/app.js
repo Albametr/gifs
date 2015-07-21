@@ -121,6 +121,10 @@ angular.module('directives', [])
                         e = e.originalEvent;
                     }
 
+                    if (video.readyState != 4) {
+                        $video.load();
+                    }
+
                     position.x = getX(e);
 
                     $targetCanvas.bind('mousemove', trackMove);
@@ -167,15 +171,15 @@ angular.module('directives', [])
                     var time = speedPos.time2 - speedPos.time1;
 
 
-                    if(diff<10){
+                    if (diff < 10) {
                         return;
                     }
 
                     var velocity = diff / time;
-                    if(isNaN(velocity)){
+                    if (isNaN(velocity)) {
                         return;
-                    }else if(velocity>5){
-                        velocity=5;
+                    } else if (velocity > 5) {
+                        velocity = 5;
                     }
 
                     var a = diff / (time * time);
