@@ -124,8 +124,11 @@ angular.module('directives', [])
                     position.x = getX(e);
 
                     $targetCanvas.bind('mousemove', trackMove);
-                    $targetCanvas.bind('mouseleave', mouseUp);
                     $targetCanvas.bind('touchmove', trackMove);
+
+                    $targetCanvas.bind('mouseup', mouseUp);
+                    $targetCanvas.bind('mouseleave', mouseUp);
+                    $targetCanvas.bind('touchend', mouseUp);
 
                     speedPos.time1 = Date.now();
                     speedPos.time2 = Date.now();
@@ -137,6 +140,7 @@ angular.module('directives', [])
                 var mouseUp = function (e) {
                     $targetCanvas.unbind('mousemove');
                     $targetCanvas.unbind('touchmove');
+                    $targetCanvas.unbind('mouseup');
                     $targetCanvas.unbind('mouseleave');
 
                     if (e.originalEvent) {
@@ -144,32 +148,42 @@ angular.module('directives', [])
                     }
 
                     position.prevX += getX(e) - position.x;
-                    if (position.prevX < 0) {
-                        position.prevX = 0;
-                    } else if (position.prevX > trackWidth) {
-                        position.prevX = trackWidth;
-                    }
+                    position.prevX = position.prevX - Math.floor(position.prevX / trackWidth) * trackWidth;
+
+                    //if (position.prevX < 0) {
+                    //    position.prevX = 0;
+                    //} else if (position.prevX > trackWidth) {
+                    //    position.prevX = trackWidth;
+                    //}
 
                     // SPEED ---------------------------
                     //var time = 40;
                     //speedPos.startX = getX(e);
-                    var timeStep = 2;
+                    var timeStep = 30;
 
 
                     var sign = Math.sign(speedPos.x2 - speedPos.x1);
                     var diff = Math.abs(speedPos.x2 - speedPos.x1);
                     var time = speedPos.time2 - speedPos.time1;
-                    console.log('--------------------------------------')
-                    console.log('diff: ' + diff + '; time: ' + time);
 
 
                     var velocity = diff / time;
+                    if(isNaN(velocity)){
+                        return;
+                    }else if(velocity>10){
+                        velocity=10;
+                    }
+
                     var a = diff / (time * time);
+                    console.log('--------------------------------------')
+                    console.log('diff: ' + diff + '; time: ' + time + '; velocity: ' + velocity);
 
                     var timer = timeStep;
+
                     var func = function () {
                         console.log("timeout 2: " + timer);
-                        var difX = velocity * timer - (a * timer * timer) / 2;
+                        var difX = velocity * timer - (0.1 * timer * timer) / 2;
+
                         console.log("difX: " + difX);
 
                         if (difX <= 0) {
@@ -177,19 +191,20 @@ angular.module('directives', [])
                         }
 
                         var x = position.prevX += sign * difX;
+                        x = x - Math.floor(x / trackWidth) * trackWidth;
 
                         console.log("X: " + x);
 
                         timer += timeStep;
-                        if (x >= 0 && x <= trackWidth) {
-                            var index = x / trackWidth * (end - start);
-                            drawFrame_2(index);
 
-                            setTimeout(func, 40);
-                        }
+                        var index = x / trackWidth * (end - start);
+                        drawFrame_2(index);
+
+                        setTimeout(func, timeStep);
+
                     };
 
-                    setTimeout(func, 40);
+                    setTimeout(func, timeStep);
 
                     //setTimeout(function () {
                     //    $targetCanvas.unbind('mousemove');
@@ -249,18 +264,18 @@ angular.module('directives', [])
 
                     speedPos.endX = getX(e);
                     x = getX(e) - position.x + position.prevX;
+                    x = x - Math.floor(x / trackWidth) * trackWidth;
 
-                    if (x >= 0 && x <= trackWidth) {
-                        //idx = parseInt(x / width * images.length);
-                        //idx = Math.min(idx, images.length - 1);
-                        //drawFrame(idx, images);
-                        var index = x / trackWidth * (end - start);
-                        drawFrame_2(index);
-                    } else if (x < 0) {
-                        position.prevX = trackWidth + x;
-                    } else if (x > trackWidth) {
-                        position.prevX = x - trackWidth;
-                    }
+
+                    //if (x < 0) {
+                    //    position.prevX = trackWidth + x;
+                    //} else if (x > trackWidth) {
+                    //    position.prevX = x - trackWidth;
+                    //}
+
+                    var index = x / trackWidth * (end - start);
+                    console.log('XXX: ' + x);
+                    drawFrame_2(index);
 
                     speedPos.time1 = speedPos.time2;
                     speedPos.x1 = speedPos.x2;
@@ -276,10 +291,9 @@ angular.module('directives', [])
                 };
 
                 $targetCanvas.bind('mousedown', mouseDown);
-                $targetCanvas.bind('mouseup', mouseUp);
+
 
                 $targetCanvas.bind('touchstart', mouseDown);
-                $targetCanvas.bind('touchend', mouseUp);
             }
         }
     }]);
