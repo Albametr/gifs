@@ -31,6 +31,7 @@ angular.module('directives', [])
                 $element = $(element);
                 var images = [];
                 var width = $element.width();
+                var trackWidth = width * 2;
                 var height = $element.height();
                 var start = 0;
                 var end = 5;
@@ -145,8 +146,8 @@ angular.module('directives', [])
                     position.prevX += getX(e) - position.x;
                     if (position.prevX < 0) {
                         position.prevX = 0;
-                    } else if (position.prevX > width) {
-                        position.prevX = width;
+                    } else if (position.prevX > trackWidth) {
+                        position.prevX = trackWidth;
                     }
 
                     // SPEED ---------------------------
@@ -180,8 +181,8 @@ angular.module('directives', [])
                         console.log("X: " + x);
 
                         timer += timeStep;
-                        if (x >= 0 && x <= width) {
-                            var index = x / width * (end - start);
+                        if (x >= 0 && x <= trackWidth) {
+                            var index = x / trackWidth * (end - start);
                             drawFrame_2(index);
 
                             setTimeout(func, 40);
@@ -249,16 +250,16 @@ angular.module('directives', [])
                     speedPos.endX = getX(e);
                     x = getX(e) - position.x + position.prevX;
 
-                    if (x >= 0 && x <= width) {
+                    if (x >= 0 && x <= trackWidth) {
                         //idx = parseInt(x / width * images.length);
                         //idx = Math.min(idx, images.length - 1);
                         //drawFrame(idx, images);
-                        var index = x / width * (end - start);
+                        var index = x / trackWidth * (end - start);
                         drawFrame_2(index);
                     } else if (x < 0) {
-                        position.prevX = width + x;
-                    } else if (x > width) {
-                        position.prevX = x - width;
+                        position.prevX = trackWidth + x;
+                    } else if (x > trackWidth) {
+                        position.prevX = x - trackWidth;
                     }
 
                     speedPos.time1 = speedPos.time2;
