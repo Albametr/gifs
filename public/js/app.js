@@ -167,11 +167,15 @@ angular.module('directives', [])
                     var time = speedPos.time2 - speedPos.time1;
 
 
+                    if(diff<10){
+                        return;
+                    }
+
                     var velocity = diff / time;
                     if(isNaN(velocity)){
                         return;
-                    }else if(velocity>10){
-                        velocity=10;
+                    }else if(velocity>5){
+                        velocity=5;
                     }
 
                     var a = diff / (time * time);
